@@ -147,11 +147,11 @@ function onBtnRecordClicked() {
     log("Start recording...");
     if (typeof MediaRecorder.isTypeSupported == "function") {
       if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
-        var options = { mimeType: "video/webm;codecs=vp9" };
+        var options = { mimeType: "video/webm;codecs=vp9,opus" };
       } else if (MediaRecorder.isTypeSupported("video/webm;codecs=h264")) {
         var options = { mimeType: "video/webm;codecs=h264" };
       } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8")) {
-        var options = { mimeType: "video/webm;codecs=vp8" };
+        var options = { mimeType: "video/webm;codecs=vp8,opus" };
       }
       log("Using " + options.mimeType);
       mediaRecorder = new MediaRecorder(localStream, options);
