@@ -33,61 +33,63 @@ function onShareScreen() {
       navigator.mediaDevices.getDisplayMedia(constraints).then(function(screenStream) {
           //check for microphone
           navigator.mediaDevices.enumerateDevices().then(function(devices) {
-              // devices.forEach(function(device) {
-              //   if (device.kind == "audioinput") {
-              //     micNumber++;
-              //   }
-              // });
+              devices.forEach(function(device) {
+                if (device.kind == "audioinput") {
+                  micNumber++;
+                  log("audio device found: " + device.label);
+                }
+              });
 
               getStreamSuccess(screenStream);
-              // if (micNumber == 0) {
-              //   getStreamSuccess(screenStream);
-              // } else {
-              //   navigator.mediaDevices.getUserMedia({audio: true}).then(function(micStream) {
-              //       var composedStream = new MediaStream();
+              if (micNumber == 0) {
+                getStreamSuccess(screenStream);
+              } else {
+                navigator.mediaDevices.getUserMedia({audio: true}).then(function(micStream) {
+                    var composedStream = new MediaStream();
 
-              //       //added the video stream from the screen
-              //       screenStream.getVideoTracks().forEach(function(videoTrack) {
-              //         composedStream.addTrack(videoTrack);
-              //       });
+                    //added the video stream from the screen
+                    screenStream.getVideoTracks().forEach(function(videoTrack) {
+                      composedStream.addTrack(videoTrack);
+                    });
 
-              //       //if system audio has been shared
-              //       if (screenStream.getAudioTracks().length > 0) {
-              //         //merge the system audio with the mic audio
-              //         var context = new AudioContext();
-              //         var audioDestination = context.createMediaStreamDestination();
+                    //if system audio has been shared
+                    if (screenStream.getAudioTracks().length > 0) {
+                      //merge the system audio with the mic audio
+                      var context = new AudioContext();
+                      var audioDestination = context.createMediaStreamDestination();
 
-              //         const systemSource = context.createMediaStreamSource(screenStream);
-              //         const systemGain = context.createGain();
-              //         systemGain.gain.value = 1.0;
-              //         systemSource.connect(systemGain).connect(audioDestination);
-              //         console.log("added system audio");
+                      const systemSource = context.createMediaStreamSource(screenStream);
+                      const systemGain = context.createGain();
+                      systemGain.gain.value = 1.0;
+                      systemSource.connect(systemGain).connect(audioDestination);
+                      console.log("added system audio");
 
-              //         if (micStream && micStream.getAudioTracks().length > 0) {
-              //           const micSource = context.createMediaStreamSource(micStream);
-              //           const micGain = context.createGain();
-              //           micGain.gain.value = 1.0;
-              //           micSource.connect(micGain).connect(audioDestination);
-              //           console.log("added mic audio");
-              //         }
+                      if (micStream && micStream.getAudioTracks().length > 0) {
+                        const micSource = context.createMediaStreamSource(micStream);
+                        const micGain = context.createGain();
+                        micGain.gain.value = 1.0;
+                        micSource.connect(micGain).connect(audioDestination);
+                        console.log("added mic audio");
+                      }
 
-              //         audioDestination.stream.getAudioTracks().forEach(function(audioTrack) {
-              //             composedStream.addTrack(audioTrack);
-              //           });
-              //       } else {
-              //         //add just the mic audio
-              //         micStream.getAudioTracks().forEach(function(micTrack) {
-              //           composedStream.addTrack(micTrack);
-              //         });
-              //       }
+                      audioDestination.stream.getAudioTracks().forEach(function(audioTrack) {
+                          composedStream.addTrack(audioTrack);
+                        });
+                    } else {
+                      //add just the mic audio
+                      micStream.getAudioTracks().forEach(function(micTrack) {
+                        log("not adding mic audio: " + micTrack);
+                        // composedStream.addTrack(micTrack);
+                      });
+                    }
                     
-              //     getStreamSuccess(composedStream);
+                  getStreamSuccess(composedStream);
                   
-              //     })
-              //     .catch(function(err) {
-              //       log("navigator.getUserMedia error: " + err);
-              //     });
-              // }
+                  })
+                  .catch(function(err) {
+                    log("navigator.getUserMedia error: " + err);
+                  });
+              }
             })
             .catch(function(err) {
               log(err.name + ": " + err.message);
