@@ -9,4 +9,4 @@ Does not work on:
 * Firefox
 
 Links:
-* [Live demo of this code](https://addpipe.com/get-display-media-demo/)
+* [Live demo of this code](https://www.clearwaterdiagnostic.com/getDisplayMedia-demo/)
